@@ -180,6 +180,9 @@ end
 ---@param line_len integer
 ---@return table
 local function build_virt_line(marks, line_len)
+    return {}
+end
+local function build_virt_line_2(marks, line_len)
     local virt_line = {}
     local line = string.rep(" ", line_len)
 
@@ -254,12 +257,12 @@ local function apply_gutter_hints(gutter_hints, buf)
             if ok then
                 gutter_signs_cache[hint] = { line = loc, id = res }
             end
-            if not ok then
-                vim.notify_once(
-                    "Failed to place sign: " .. config.gutterHints[hint].text,
-                    vim.log.levels.WARN
-                )
-            end
+            --if not ok then
+                -- vim.notify_once(
+                --     "Failed to place sign: " .. config.gutterHints[hint].text,
+                --     vim.log.levels.WARN
+                -- )
+            --end
         end
     end
 end
@@ -300,10 +303,10 @@ local function on_cursor_hold()
             { buf = vim.api.nvim_get_current_buf() }
         ) == ""
     then
-        extmark = vim.api.nvim_buf_set_extmark(0, ns, cursorline - 1, 0, {
-            id = extmark, -- reuse the same extmark if it exists
-            virt_lines = { virt_line },
-        })
+        -- extmark = vim.api.nvim_buf_set_extmark(0, ns, cursorline - 1, 0, {
+        --     id = extmark, -- reuse the same extmark if it exists
+        --     virt_lines = { virt_line },
+        -- })
     end
     apply_gutter_hints(
         build_gutter_hints(vim.api.nvim_get_current_buf()),
