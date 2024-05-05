@@ -1,7 +1,7 @@
 local M = {}
 
 ---@alias SupportedHints "'^'" | "'b'" | "'w'" | "'$'"
----@alias SupportedGutterHints "G" | "gg" | "{" | "}"
+---@alias SupportedGutterHints "G" | "gg" | "{" | "}" | "M" | "L" | "H"
 
 ---@class Precognition.Config
 ---@field startVisible boolean
@@ -33,6 +33,9 @@ local default = {
         --prio is not currentlt used for gutter hints
         ["G"] = { text = "G", prio = 1 },
         ["gg"] = { text = "gg", prio = 1 },
+        ["M"] = { text = "M", prio = 1 },
+        ["H"] = { text = "H", prio = 1 },
+        ["L"] = { text = "L", prio = 1 },
         ["{"] = { text = "{", prio = 1 },
         ["}"] = { text = "}", prio = 1 },
     },
@@ -213,11 +216,19 @@ end
 ---@param buf integer == bufnr
 ---@return Precognition.GutterHints
 local function build_gutter_hints(buf)
+    local t_row = vim.fn.line("w0")
+    local b_row = vim.fn.line("w$")
+    local total_row = b_row - t_row + 1
+    local m_row = t_row + vim.fn.round(total_row / 2) - 1
+
     local gutter_hints = {
         ["G"] = vim.api.nvim_buf_line_count(buf),
         ["gg"] = 1,
         ["{"] = vim.fn.search("^\\s*$", "bn"),
         ["}"] = vim.fn.search("^\\s*$", "n"),
+        ["H"] = t_row,
+        ["M"] = m_row,
+        ["L"] = b_row,
     }
 
     return gutter_hints
