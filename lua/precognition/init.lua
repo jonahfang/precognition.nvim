@@ -220,6 +220,9 @@ local function build_gutter_hints(buf)
     local b_row = vim.fn.line("w$")
     local total_row = b_row - t_row + 1
     local m_row = t_row + vim.fn.round(total_row / 2) - 1
+    if total_row < 20 then
+        return {}
+    end
 
     local gutter_hints = {
         ["G"] = vim.api.nvim_buf_line_count(buf),
