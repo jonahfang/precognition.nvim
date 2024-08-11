@@ -57,6 +57,7 @@ local gutter_signs_cache = {} -- cache for gutter signs
 
 ---@type integer
 local au = vim.api.nvim_create_augroup("precognition", { clear = true })
+local au_peek = vim.api.nvim_create_augroup("precognition_peek", { clear = true })
 ---@type integer
 local ns = vim.api.nvim_create_namespace("precognition")
 ---@type string
@@ -406,12 +407,25 @@ end
 function M.peek()
     on_cursor_hold_2()
 
-    vim.api.nvim_create_autocmd({ "CursorMoved", "InsertEnter", "BufLeave" }, {
+    vim.api.nvim_create_autocmd({"InsertEnter", "BufLeave" }, {
         buffer = vim.api.nvim_get_current_buf(),
-        once = true,
-        group = au,
+        --once = true,
+        group = au_peek,
         callback = on_buf_leave,
     })
+    vim.api.nvim_create_autocmd("CursorMoved", {
+        buffer = vim.api.nvim_get_current_buf(),
+        group = au_peek,
+        callback = on_cursor_hold_2,
+    })
+end
+
+function M.peek_undo()
+    if extmark then
+        vim.api.nvim_buf_del_extmark(0, ns, extmark)
+        extmark = nil
+    end
+    au = vim.api.nvim_create_augroup("precognition_peek", { clear = true })
 end
 
 --- Enable automatic showing of hints
