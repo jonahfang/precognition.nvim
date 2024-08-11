@@ -183,9 +183,9 @@ end
 ---@param line_len integer
 ---@return table
 local function build_virt_line(marks, line_len)
-    return {}
-end
-local function build_virt_line_2(marks, line_len)
+    --return {}
+    --end
+    --local function build_virt_line_2(marks, line_len)
     local virt_line = {}
     local line = string.rep(" ", line_len)
 
@@ -311,21 +311,56 @@ local function on_cursor_hold()
     -- TODO: can we add indent lines to the virt line to match indent-blankline or similar (if installed)?
 
     -- create (or overwrite) the extmark
+
+    apply_gutter_hints(
+        build_gutter_hints(vim.api.nvim_get_current_buf()),
+        vim.api.nvim_get_current_buf()
+    )
+
+    dirty = false
+end
+
+local function on_cursor_hold_2()
+    local cursorline, cursorcol = unpack(vim.api.nvim_win_get_cursor(0))
+    cursorcol = cursorcol + 1
+    if extmark and not dirty then
+        return
+    end
+
+    local tab_width = vim.bo.expandtab and vim.bo.shiftwidth or vim.bo.tabstop
+    local cur_line =
+        vim.api.nvim_get_current_line():gsub("\t", string.rep(" ", tab_width))
+    local line_len = vim.fn.strcharlen(cur_line)
+    -- local after_cursor = vim.fn.strcharpart(cur_line, cursorcol + 1)
+    -- local before_cursor = vim.fn.strcharpart(cur_line, 0, cursorcol - 1)
+    -- local before_cursor_rev = string.reverse(before_cursor)
+    -- local under_cursor = vim.fn.strcharpart(cur_line, cursorcol - 1, 1)
+
+    -- FIXME: Lua patterns don't play nice with utf-8, we need a better way to
+    -- get char offsets for more complex motions.
+
+    local virt_line = build_virt_line({
+        ["w"] = next_word_boundary(cur_line, cursorcol),
+        ["e"] = end_of_word(cur_line, cursorcol),
+        ["b"] = prev_word_boundary(cur_line, cursorcol),
+        ["^"] = cur_line:find("%S") or 0,
+        ["$"] = line_len,
+    }, line_len)
+
+    -- TODO: can we add indent lines to the virt line to match indent-blankline or similar (if installed)?
+
+    -- create (or overwrite) the extmark
     if
         vim.api.nvim_get_option_value(
             "buftype",
             { buf = vim.api.nvim_get_current_buf() }
         ) == ""
     then
-        -- extmark = vim.api.nvim_buf_set_extmark(0, ns, cursorline - 1, 0, {
-        --     id = extmark, -- reuse the same extmark if it exists
-        --     virt_lines = { virt_line },
-        -- })
+        extmark = vim.api.nvim_buf_set_extmark(0, ns, cursorline - 1, 0, {
+            id = extmark, -- reuse the same extmark if it exists
+            virt_lines = { virt_line },
+        })
     end
-    apply_gutter_hints(
-        build_gutter_hints(vim.api.nvim_get_current_buf()),
-        vim.api.nvim_get_current_buf()
-    )
 
     dirty = false
 end
@@ -369,7 +404,7 @@ end
 
 --- Show the hints until the next keypress or CursorMoved event
 function M.peek()
-    on_cursor_hold()
+    on_cursor_hold_2()
 
     vim.api.nvim_create_autocmd({ "CursorMoved", "InsertEnter", "BufLeave" }, {
         buffer = vim.api.nvim_get_current_buf(),
