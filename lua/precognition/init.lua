@@ -72,9 +72,9 @@ local function char_class(char)
         if char == " " or char == "\t" or char == "\0" then
             return 0 -- whitespace
         end
-        if char == "_" or char:match("%w") then
-            return 2 -- word character
-        end
+        --if char == "_" or char:match("%w") then
+        --    return 2 -- word character
+        --end
         return 1 -- other
     end
 
@@ -202,7 +202,7 @@ local function build_virt_line(marks, line_len)
                 if
                     existing ~= ""
                     and config.hints[mark].prio
-                        > config.hints[existing].prio
+                    > config.hints[existing].prio
                 then
                     line = line:sub(1, col - 1) .. hint .. line:sub(col + 1)
                 end
@@ -273,10 +273,10 @@ local function apply_gutter_hints(gutter_hints, buf)
                 gutter_signs_cache[hint] = { line = loc, id = res }
             end
             --if not ok then
-                -- vim.notify_once(
-                --     "Failed to place sign: " .. config.gutterHints[hint].text,
-                --     vim.log.levels.WARN
-                -- )
+            -- vim.notify_once(
+            --     "Failed to place sign: " .. config.gutterHints[hint].text,
+            --     vim.log.levels.WARN
+            -- )
             --end
         end
     end
@@ -291,7 +291,7 @@ local function on_cursor_hold()
 
     local tab_width = vim.bo.expandtab and vim.bo.shiftwidth or vim.bo.tabstop
     local cur_line =
-        vim.api.nvim_get_current_line():gsub("\t", string.rep(" ", tab_width))
+    vim.api.nvim_get_current_line():gsub("\t", string.rep(" ", tab_width))
     local line_len = vim.fn.strcharlen(cur_line)
     -- local after_cursor = vim.fn.strcharpart(cur_line, cursorcol + 1)
     -- local before_cursor = vim.fn.strcharpart(cur_line, 0, cursorcol - 1)
@@ -330,7 +330,7 @@ local function on_cursor_hold_2()
 
     local tab_width = vim.bo.expandtab and vim.bo.shiftwidth or vim.bo.tabstop
     local cur_line =
-        vim.api.nvim_get_current_line():gsub("\t", string.rep(" ", tab_width))
+    vim.api.nvim_get_current_line():gsub("\t", string.rep(" ", tab_width))
     local line_len = vim.fn.strcharlen(cur_line)
     -- local after_cursor = vim.fn.strcharpart(cur_line, cursorcol + 1)
     -- local before_cursor = vim.fn.strcharpart(cur_line, 0, cursorcol - 1)
@@ -425,7 +425,7 @@ function M.peek_undo()
         vim.api.nvim_buf_del_extmark(0, ns, extmark)
         extmark = nil
     end
-    au = vim.api.nvim_create_augroup("precognition_peek", { clear = true })
+    vim.api.nvim_create_augroup("precognition_peek", { clear = true })
 end
 
 --- Enable automatic showing of hints
