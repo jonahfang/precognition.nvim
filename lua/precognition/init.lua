@@ -500,6 +500,9 @@ function M.setup(opts)
     au = vim.api.nvim_create_augroup("precognition", { clear = true })
     if config.startVisible then
         M.show()
+        vim.defer_fn(function()
+            M.peek()
+        end, 2000)
     end
 end
 
