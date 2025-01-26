@@ -301,13 +301,13 @@ local function on_cursor_hold()
     -- FIXME: Lua patterns don't play nice with utf-8, we need a better way to
     -- get char offsets for more complex motions.
 
-    local virt_line = build_virt_line({
-        ["w"] = next_word_boundary(cur_line, cursorcol),
-        ["e"] = end_of_word(cur_line, cursorcol),
-        ["b"] = prev_word_boundary(cur_line, cursorcol),
-        ["^"] = cur_line:find("%S") or 0,
-        ["$"] = line_len,
-    }, line_len)
+    -- local virt_line = build_virt_line({
+    --     ["w"] = next_word_boundary(cur_line, cursorcol),
+    --     ["e"] = end_of_word(cur_line, cursorcol),
+    --     ["b"] = prev_word_boundary(cur_line, cursorcol),
+    --     ["^"] = cur_line:find("%S") or 0,
+    --     ["$"] = line_len,
+    -- }, line_len)
 
     -- TODO: can we add indent lines to the virt line to match indent-blankline or similar (if installed)?
 
@@ -340,13 +340,13 @@ local function on_cursor_hold_2()
     -- FIXME: Lua patterns don't play nice with utf-8, we need a better way to
     -- get char offsets for more complex motions.
 
-    local virt_line = build_virt_line({
-        ["w"] = next_word_boundary(cur_line, cursorcol),
-        ["e"] = end_of_word(cur_line, cursorcol),
-        ["b"] = prev_word_boundary(cur_line, cursorcol),
-        ["^"] = cur_line:find("%S") or 0,
-        ["$"] = line_len,
-    }, line_len)
+    -- local virt_line = build_virt_line({
+    --     ["w"] = next_word_boundary(cur_line, cursorcol),
+    --     ["e"] = end_of_word(cur_line, cursorcol),
+    --     ["b"] = prev_word_boundary(cur_line, cursorcol),
+    --     ["^"] = cur_line:find("%S") or 0,
+    --     ["$"] = line_len,
+    -- }, line_len)
 
     -- TODO: can we add indent lines to the virt line to match indent-blankline or similar (if installed)?
 
@@ -357,10 +357,10 @@ local function on_cursor_hold_2()
             { buf = vim.api.nvim_get_current_buf() }
         ) == ""
     then
-        extmark = vim.api.nvim_buf_set_extmark(0, ns, cursorline - 1, 0, {
-            id = extmark, -- reuse the same extmark if it exists
-            virt_lines = { virt_line },
-        })
+        -- extmark = vim.api.nvim_buf_set_extmark(0, ns, cursorline - 1, 0, {
+        --     id = extmark, -- reuse the same extmark if it exists
+        --     virt_lines = { virt_line },
+        -- })
     end
 
     dirty = false
